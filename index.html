@@ -2074,12 +2074,12 @@
                 <div id="lexTabIndicator"></div>
             </div>
             <div class="lex-toolbar">
-                <input type="text" id="lexSearchInput" class="search-input" placeholder="Search explorer..." style="width: 30%;">
+                <input type="text" id="lexSearchInput" class="search-input" placeholder="Search explorer..." style="width: 30%;" aria-label="Search library explorer">
                 <div class="lex-sub-tabs">
                     <button class="lex-sub-btn active" data-sub="files">File Upload</button>
                     <button class="lex-sub-btn" data-sub="folder">Folder Upload</button>
                 </div>
-                <select id="lexViewSelect" class="lex-view-select">
+                <select id="lexViewSelect" class="lex-view-select" aria-label="Library explorer view mode">
                     <option value="list">Lists View</option>
                     <option value="grid">Large Icons Grid</option>
                 </select>
@@ -2103,7 +2103,7 @@
                     </div>
                     <div style="display:flex; gap:10px; align-items: center;">
                         <button class="btn" id="btnClearHistory" style="border-color:#ff4444; color:#ff4444; padding: 6px 12px; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i> Clear History</button>
-                        <select id="lexHistoryViewSelect" class="lex-view-select">
+                        <select id="lexHistoryViewSelect" class="lex-view-select" aria-label="Playback history view mode">
                             <option value="list">Lists View</option>
                             <option value="grid">Large Icons Grid</option>
                         </select>
@@ -2122,7 +2122,7 @@
                     <h2 style="font-size: 1.5rem; color: var(--accent-main); letter-spacing: 2px; margin: 0;">MY PLAYLISTS</h2>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="plViewSelect" class="lex-view-select">
+                    <select id="plViewSelect" class="lex-view-select" aria-label="Playlists view mode">
                         <option value="grid">Large Icons Grid</option>
                         <option value="list">Lists View</option>
                     </select>
@@ -2133,7 +2133,7 @@
             <div class="pl-viewport" id="plViewport">
                 <div id="plMainView" class="pl-slide-layer" style="display: flex; flex-direction: column; height: 100%;">
                     <div class="lex-toolbar" style="border-bottom: 1px solid var(--border-color); padding: 15px; display: flex; gap: 15px; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); flex-shrink: 0;">
-                        <input type="text" id="plMainSearchInput" class="search-input" placeholder="Search playlists..." style="flex: 1;">
+                        <input type="text" id="plMainSearchInput" class="search-input" placeholder="Search playlists..." style="flex: 1;" aria-label="Search playlists">
                         <button class="btn" id="btnDeleteAllPlaylists" style="border-color: #ff4444; color: #ff4444; padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-trash-can"></i> Delete All</button>
                     </div>
                     
@@ -2145,7 +2145,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                             <button id="btnPlBack" class="btn-drill-back" style="margin-bottom:0;"><i class="fa-solid fa-arrow-left"></i> Back</button>
                             <div style="display: flex; gap: 10px;">
-                                <input type="text" id="plSearchInput" class="search-input" placeholder="Search tracks..." style="width: 200px;">
+                                <input type="text" id="plSearchInput" class="search-input" placeholder="Search tracks..." style="width: 200px;" aria-label="Search tracks in playlist">
                                 <button class="btn" id="btnBatchAddTracks" style="border-color: var(--accent-main); color: var(--accent-main); padding: 6px 12px; font-size: 0.75rem;"><i class="fa-solid fa-plus"></i> Add</button>
                                 <button class="btn" id="btnDeletePlaylist" style="border-color: #ff4444; color: #ff4444; padding: 6px 12px; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i> Delete</button>
                             </div>
@@ -2164,11 +2164,11 @@
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                             <div class="lex-alpha-header" style="margin:0; border:none; padding:0; font-size:1.2rem;">Track List</div>
                             <div style="display:flex; gap:10px;">
-                                <select id="plDrillSortSelect" class="lex-view-select">
+                                <select id="plDrillSortSelect" class="lex-view-select" aria-label="Sort playlist tracks by">
                                     <option value="index" selected>Index</option>
                                     <option value="name">Name (A-Z)</option>
                                 </select>
-                                <select id="plDrillViewSelect" class="lex-view-select">
+                                <select id="plDrillViewSelect" class="lex-view-select" aria-label="Playlist tracks view mode">
                                     <option value="list">Lists View</option>
                                     <option value="grid">Large Icons Grid</option>
                                 </select>
@@ -2211,20 +2211,20 @@
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
                                 <p>Drag Audio & .LRC files here</p>
                                 <button class="btn" id="btnBrowseFiles">Browse Files</button>
-                                <input type="file" id="fileInput" accept="audio/*, .lrc" multiple style="display: none;">
+                                <input type="file" id="fileInput" accept="audio/*, .lrc" multiple style="display: none;" aria-label="Upload audio files">
                             </div>
                             <div class="workspace-controls" style="position: relative; border-bottom: 1px solid var(--border-color); display: flex; gap: 10px; justify-content: center; padding: 1.5rem;">
                                 <button class="action-btn" onclick="openDialog('workspaceBackupInfoDialog')" style="position: absolute; top: 10px; right: 15px; color: var(--accent-main); font-size: 1.1rem; transition: transform 0.2s;" title="What does this do?"><i class="fa-solid fa-circle-info"></i></button>
                                 <button class="btn" id="btnExport" title="Export Workspace to JSON"><i class="fa-solid fa-download"></i> Backup</button>
                                 <button class="btn" id="btnImport" title="Import Workspace JSON"><i class="fa-solid fa-upload"></i> Restore</button>
-                                <input type="file" id="importInput" accept=".json" style="display: none;">
+                                <input type="file" id="importInput" accept=".json" style="display: none;" aria-label="Import library JSON file">
                             </div>
                             <div class="playlist-container" id="playlist"></div>
                         </div>
 
                         <div class="flip-back">
                             <div style="padding: 12px 1.5rem; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.1);">
-                                <input type="text" id="searchInput" class="search-input" placeholder="Search folder tracks..." style="margin-bottom: 0; width: 100%;">
+                                <input type="text" id="searchInput" class="search-input" placeholder="Search folder tracks..." style="margin-bottom: 0; width: 100%;" aria-label="Search folder tracks">
                             </div>
                             <div class="drop-zone" id="folderDropZone" style="border-bottom: 1px solid var(--border-color); position: relative;">
                                 <button class="btn" id="btnSyncFolder" disabled style="position: absolute; top: 10px; right: 10px; font-size: 0.65rem; padding: 4px 8px; border-radius: 4px; display: none; z-index: 5; letter-spacing: 0.5px;">
@@ -2234,7 +2234,7 @@
                                 <p id="folderDropText">Import a full Music Directory</p>
                                 <button class="btn" id="btnBrowseFolder">Select Folder</button>
                                 <button class="btn" id="btnRestoreFolder" style="display:none; background: var(--accent-main); color: #fff; box-shadow: 0 0 15px var(--accent-glow);">Restore Tracks</button>
-                                <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
+                                <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" aria-label="Select music folder">
                             </div>
                             <div class="playlist-container" id="folderPlaylist"></div>
                         </div>
@@ -2301,7 +2301,7 @@
                             <p style="color: var(--text-main); font-weight: bold; margin-bottom: 0.5rem; font-size: 1.1rem;">No Lyrics Attached to This Track</p>
                             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; max-width: 300px;">Drag & drop a matching .LRC file here, or browse local files to sync karaoke mode.</p>
                             <button class="btn" id="btnInlineBrowseLrc">Attach .LRC File</button>
-                            <input type="file" id="inlineLrcInput" accept=".lrc" style="display: none;">
+                            <input type="file" id="inlineLrcInput" accept=".lrc" style="display: none;" aria-label="Upload lyrics file">
                         </div>
                         <div id="lyricsContainer"></div>
                     </div>
@@ -2496,8 +2496,8 @@
             </div>
         </dialog>
 
-        <input type="file" id="trackInfoLrcInput" accept=".lrc" style="display: none;">
-        <input type="file" id="updateTrackInput" accept="audio/*" style="display:none;">
+        <input type="file" id="trackInfoLrcInput" accept=".lrc" style="display: none;" aria-label="Upload lyrics file for this track">
+        <input type="file" id="updateTrackInput" accept="audio/*" style="display:none;" aria-label="Replace audio file for this track">
 
         <dialog id="trackPlaylistsDialog" style="max-width: 420px;">
             <div class="dialog-header">
@@ -2588,11 +2588,11 @@
             <div class="form-group" style="display: flex; gap: 15px; margin-bottom: 15px;">
                 <div style="flex: 1;">
                     <label>Owner Name</label>
-                    <input type="text" id="captureInputName" value="Muhammad Saiffuddin Bin Ahmad Fauzi" class="search-input" style="width: 100%; background-image: none; padding: 10px;">
+                    <input type="text" id="captureInputName" value="Muhammad Saiffuddin Bin Ahmad Fauzi" class="search-input" style="width: 100%; background-image: none; padding: 10px;" aria-label="Your name">
                 </div>
                 <div style="flex: 1;">
                     <label>Email ID</label>
-                    <input type="text" id="captureInputEmail" value="sfmuhammmad327@gmail.com" class="search-input" style="width: 100%; background-image: none; padding: 10px;">
+                    <input type="text" id="captureInputEmail" value="sfmuhammmad327@gmail.com" class="search-input" style="width: 100%; background-image: none; padding: 10px;" aria-label="Your email address">
                 </div>
             </div>
 
@@ -2929,7 +2929,7 @@
                 </div>
 
                 <div id="patch10" class="patch-content" style="display: none;">
-                    <p style="color: var(--text-main); font-weight: bold; margin-bottom: 10px;">Initial Release: V1.0 Genesis</p>
+                    <p style="color: var(--text-main); font-weight: bold; margin-bottom: 10px;">Initial Release: V1.0 (06 July 2026)</p>
                     <p style="margin-bottom: 15px;">The foundational architecture of the Aura Engine.</p>
                     
                     <ul style="padding-left: 20px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
@@ -2977,23 +2977,23 @@
                             <div style="display: flex; align-items: center; width: 100%;">
                                 <strong style="width: 50px;">Title:</strong>
                                 <!-- Input Constraints Added Here -->
-                                <input type="text" id="expInputTitle" class="id3-edit-input" maxlength="100" readonly>
+                                <input type="text" id="expInputTitle" class="id3-edit-input" maxlength="100" readonly aria-label="Track title">
                             </div>
                             <div style="display: flex; align-items: center; width: 100%;">
                                 <strong style="width: 50px;">Artist:</strong>
-                                <input type="text" id="expInputArtist" class="id3-edit-input" maxlength="100" readonly>
+                                <input type="text" id="expInputArtist" class="id3-edit-input" maxlength="100" readonly aria-label="Track artist">
                             </div>
                             <div style="display: flex; align-items: center; width: 100%;">
                                 <strong style="width: 50px;">Album:</strong>
-                                <input type="text" id="expInputAlbum" class="id3-edit-input" maxlength="50" readonly>
+                                <input type="text" id="expInputAlbum" class="id3-edit-input" maxlength="50" readonly aria-label="Track album">
                             </div>
                             <div style="display: flex; align-items: center; width: 100%;">
                                 <strong style="width: 50px;">Genre:</strong>
-                                <input type="text" id="expInputGenre" class="id3-edit-input" maxlength="30" readonly>
+                                <input type="text" id="expInputGenre" class="id3-edit-input" maxlength="30" readonly aria-label="Track genre">
                             </div>
                             <div style="display: flex; align-items: center; width: 100%;">
                                 <strong style="width: 50px;">Year:</strong>
-                                <input type="text" id="expInputYear" class="id3-edit-input" maxlength="4" readonly>
+                                <input type="text" id="expInputYear" class="id3-edit-input" maxlength="4" readonly aria-label="Track year">
                             </div>
                         </div>
                     </div>
@@ -3026,7 +3026,7 @@
             <div class="fav-controls" style="justify-content: flex-start; margin-bottom: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display:flex; gap:15px; width:100%;">
                 <div style="flex:1;">
                     <label style="display:block; margin-bottom:5px;">Bitrate (kbps)</label>
-                    <select id="selExportBitrate" style="width: 100%; border-color: var(--accent-main); outline: none;">
+                    <select id="selExportBitrate" style="width: 100%; border-color: var(--accent-main); outline: none;" aria-label="Export bitrate">
                         <option value="128">128 kbps</option>
                         <option value="192">192 kbps</option>
                         <option value="256">256 kbps</option>
@@ -3035,14 +3035,14 @@
                 </div>
                 <div style="flex:1;">
                     <label style="display:block; margin-bottom:5px;">Sample Rate</label>
-                    <select id="selExportSampleRate" style="width: 100%; border-color: var(--accent-main); outline: none;">
+                    <select id="selExportSampleRate" style="width: 100%; border-color: var(--accent-main); outline: none;" aria-label="Export sample rate">
                         <option value="44100" selected>44.1kHz</option>
                         <option value="48000">48kHz</option>
                     </select>
                 </div>
                 <div style="flex:1;">
                     <label style="display:block; margin-bottom:5px;">Format</label>
-                    <select id="selExportFormat" style="width: 100%; border-color: var(--accent-main); outline: none;">
+                    <select id="selExportFormat" style="width: 100%; border-color: var(--accent-main); outline: none;" aria-label="Export audio format">
                         <option value="mp3" selected>MP3 (.mp3)</option>
                         <option value="wav">WAV (.wav)</option>
                     </select>
@@ -3069,7 +3069,7 @@
             </div>
         </dialog>
 
-        <input type="file" id="expArtInput" accept="image/*" style="display: none;">
+        <input type="file" id="expArtInput" accept="image/*" style="display: none;" aria-label="Upload cover art image">
 
         <dialog id="recordConfigDialog" style="max-width: 520px;">
             <div class="dialog-header">
@@ -3081,7 +3081,7 @@
 
             <div class="form-group" style="margin-bottom: 15px;">
                 <label style="color: var(--accent-main); font-weight: bold; font-size: 0.85rem;"><i class="fa-solid fa-film"></i> Video FPS (Frames Per Second)</label>
-                <select id="selRecordFps">
+                <select id="selRecordFps" aria-label="Recording frame rate">
                     <option value="24">24 FPS (Cinematic, Low File Size)</option>
                     <option value="30" selected>30 FPS (Standard, Stable)</option>
                     <option value="60">60 FPS (Ultra Smooth, High CPU Load)</option>
@@ -3091,7 +3091,7 @@
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group" style="flex: 1; margin-bottom: 0;">
                     <label style="color: var(--accent-main); font-weight: bold; font-size: 0.85rem;"><i class="fa-solid fa-sliders"></i> Capture Sound Quality</label>
-                    <select id="selRecordSoundQuality">
+                    <select id="selRecordSoundQuality" aria-label="Recording sound quality">
                         <option value="muted">Muted Sound (No Audio Track)</option>
                         <option value="normal" selected>Normal Sound (Standard Render)</option>
                         <option value="original">Original Heard Sound Quality</option>
@@ -3100,7 +3100,7 @@
 
                 <div class="form-group" style="flex: 1; margin-bottom: 0;">
                     <label style="color: var(--accent-main); font-weight: bold; font-size: 0.85rem;"><i class="fa-solid fa-file-video"></i> Output Format</label>
-                    <select id="selRecordFormat">
+                    <select id="selRecordFormat" aria-label="Recording video format">
                         <option value="webm" selected>WebM (.webm)</option>
                         <option value="mp4">MP4 (.mp4)</option>
                         <option value="mov">MOV (.mov)</option>
@@ -3111,7 +3111,7 @@
             <div style="display: flex; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group" style="flex: 1; margin-bottom: 0;">
                     <label style="color: var(--accent-main); font-weight: bold; font-size: 0.85rem;"><i class="fa-solid fa-microchip"></i> Video Bitrate (Quality)</label>
-                    <select id="selRecordBitrate">
+                    <select id="selRecordBitrate" aria-label="Recording video bitrate">
                         <option value="2500000" selected>Standard (2.5 Mbps)</option>
                         <option value="5000000">High (5 Mbps - 720p)</option>
                         <option value="8000000">Premium (8 Mbps - 1080p)</option>
@@ -3208,7 +3208,7 @@
                 <button id="btnCloseFav" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; padding: 0 5px;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="fav-controls">
-                <input type="text" id="searchFavInput" class="search-input" placeholder="Search favourites..." style="flex: 1; min-width: 150px; margin-right: 10px;">
+                <input type="text" id="searchFavInput" class="search-input" placeholder="Search favourites..." style="flex: 1; min-width: 150px; margin-right: 10px;" aria-label="Search favourites">
                 <label for="selFavSort">Sort By:</label>
                 <select id="selFavSort">
                     <option value="index">Index (Default)</option>
@@ -3217,7 +3217,7 @@
                     <option value="date">Date Added</option>
                     <option value="lrc">Lyrics Attached</option>
                 </select>
-                <select id="selFavOrder">
+                <select id="selFavOrder" aria-label="Favourites sort order">
                     <option value="asc">Ascending</option>
                     <option value="desc">Descending</option>
                 </select>
@@ -3231,7 +3231,7 @@
             </div>
             <div class="form-group" style="text-align: left; margin-bottom: 5px;">
                 <label style="color: var(--text-muted); font-size: 0.85rem; font-weight: bold;">Playlist Name</label>
-                <input type="text" id="newPlaylistName" maxlength="30" class="search-input" placeholder="e.g. Late Night Vibes" style="width: 100%; background-image: none; padding: 10px; font-size: 1rem;">
+                <input type="text" id="newPlaylistName" maxlength="30" class="search-input" placeholder="e.g. Late Night Vibes" style="width: 100%; background-image: none; padding: 10px; font-size: 1rem;" aria-label="New playlist name">
             </div>
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 25px;">
                 <button class="btn" id="btnCancelCreatePlaylist" style="border-color: var(--text-muted); color: var(--text-muted);">Cancel</button>
@@ -3244,7 +3244,7 @@
                 <h3><i class="fa-solid fa-list-ul"></i> Add to Playlist</h3>
                 <button class="close-dialog-btn" id="btnCloseAddToPlaylist"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <input type="text" id="searchAddToPlInput" class="search-input" placeholder="Search playlists..." style="width: 100%; margin-bottom: 15px;">
+            <input type="text" id="searchAddToPlInput" class="search-input" placeholder="Search playlists..." style="width: 100%; margin-bottom: 15px;" aria-label="Search playlists to add track to">
             <div class="lex-list-layout" id="addToPlaylistList" style="max-height: 300px; overflow-y: auto; padding-right: 5px;">
             </div>
         </dialog>
@@ -3264,7 +3264,7 @@
             <p style="color: var(--text-main); margin-bottom: 15px; font-size: 0.85rem; font-weight: bold;">Type <strong>Delete My Favourites</strong> below to confirm.</p>
             
             <div class="form-group" style="text-align: left; margin-bottom: 15px;">
-                <input type="text" id="removeAllFavsInput" class="search-input" placeholder="Delete My Favourites" style="width: 100%; background-image: none; padding: 10px; font-size: 1rem; text-align: center;">
+                <input type="text" id="removeAllFavsInput" class="search-input" placeholder="Delete My Favourites" style="width: 100%; background-image: none; padding: 10px; font-size: 1rem; text-align: center;" aria-label="Type to confirm deleting all favourites">
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 25px;">
@@ -3279,7 +3279,7 @@
             </div>
             <div class="form-group" style="text-align: left; margin-bottom: 5px;">
                 <label style="color: var(--text-muted); font-size: 0.85rem; font-weight: bold;">New Name</label>
-                <input type="text" id="renamePlaylistInput" maxlength="30" class="search-input" style="width: 100%; background-image: none; padding: 10px; font-size: 1rem;">
+                <input type="text" id="renamePlaylistInput" maxlength="30" class="search-input" style="width: 100%; background-image: none; padding: 10px; font-size: 1rem;" aria-label="New playlist name">
             </div>
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 25px;">
                 <button class="btn" id="btnCancelRenamePlaylist" style="border-color: var(--text-muted); color: var(--text-muted);">Cancel</button>
@@ -3306,7 +3306,7 @@
             <p style="color: var(--text-main); margin-bottom: 15px; font-size: 0.85rem; font-weight: bold;">Type <strong>Delete My Playlist</strong> below to confirm.</p>
             
             <div class="form-group" style="text-align: left; margin-bottom: 15px;">
-                <input type="text" id="deleteAllInput" class="search-input" placeholder="Delete My Playlist" style="width: 100%; background-image: none; padding: 10px; font-size: 1rem; text-align: center;">
+                <input type="text" id="deleteAllInput" class="search-input" placeholder="Delete My Playlist" style="width: 100%; background-image: none; padding: 10px; font-size: 1rem; text-align: center;" aria-label="Type to confirm deleting playlist">
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 25px;">
@@ -3320,16 +3320,16 @@
                 <h3><i class="fa-solid fa-layer-group"></i> Add Tracks to Playlist</h3>
             </div>
             <div class="fav-controls" style="margin-bottom: 15px; display:flex; gap:10px; flex-wrap:wrap;">
-                <input type="text" id="batchSearchInput" class="search-input" placeholder="Search across all tracks..." style="flex: 1; min-width: 200px;">
+                <input type="text" id="batchSearchInput" class="search-input" placeholder="Search across all tracks..." style="flex: 1; min-width: 200px;" aria-label="Search across all tracks">
                 <div style="display:flex; gap:10px;">
-                    <select id="batchSortSelect" class="lex-view-select" style="min-width: 150px;">
+                    <select id="batchSortSelect" class="lex-view-select" style="min-width: 150px;" aria-label="Sort tracks by">
                         <option value="name" selected>Name (A-Z)</option>
                         <option value="date">Date Added</option>
                         <option value="size">Size</option>
                         <option value="label">Label Type</option>
                         <option value="not_in_pl">Not From Playlist</option>
                     </select>
-                    <select id="batchOrderSelect" class="lex-view-select" style="min-width: 110px;">
+                    <select id="batchOrderSelect" class="lex-view-select" style="min-width: 110px;" aria-label="Sort order">
                         <option value="asc" selected>Ascending</option>
                         <option value="desc">Descending</option>
                     </select>
@@ -3492,7 +3492,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                 <label style="margin: 0;" class="setting-label">Custom Cover Art (Max: 7)</label>
                                 <button class="btn" id="btnUploadCustomArt" style="padding: 4px 10px; font-size: 0.7rem;"><i class="fa-solid fa-upload"></i> Upload</button>
-                                <input type="file" id="customArtInput" accept="image/*" style="display: none;">
+                                <input type="file" id="customArtInput" accept="image/*" style="display: none;" aria-label="Upload custom cover art">
                             </div>
                             <div class="art-grid" id="customArtGrid"></div>
                         </div>
@@ -3582,7 +3582,7 @@
                         </div>
                         <div class="form-group" style="margin-bottom:5px;">
                             <label class="setting-label" style="margin-bottom: 5px;">Lyrics Text Motion</label>
-                            <select id="selStageLyricMotion" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none;">
+                            <select id="selStageLyricMotion" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none;" aria-label="Lyric stage motion style">
                                 <option value="idle" selected>Idle</option>
                                 <option value="floating">Floating</option>
                             </select>
@@ -3685,7 +3685,7 @@
                             <label><input type="radio" name="borderStageColor" value="custom"> Custom Color</label>
                         </div>
                         <div id="customBorderColorContainer" style="display: none; align-items: center; gap: 10px; margin-top: 10px; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; border: 1px dashed var(--border-color); width: max-content;">
-                            <input type="color" id="customBorderColorPicker" value="#00ff00" style="width: 30px; height: 30px; padding: 0; border: none; border-radius: 4px; cursor: pointer; background: transparent;">
+                            <input type="color" id="customBorderColorPicker" value="#00ff00" style="width: 30px; height: 30px; padding: 0; border: none; border-radius: 4px; cursor: pointer; background: transparent;" aria-label="Custom border color">
                             <span id="customBorderHexLabel" style="font-family: monospace; color: var(--text-main); font-size: 0.95rem; font-weight: bold; letter-spacing: 1px;">#00FF00</span>
                         </div>
                     </div>
@@ -3701,7 +3701,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <label style="margin: 0;" class="setting-label">Background Stage Cover (Max: 5)</label>
                             <button class="btn" id="btnUploadStageBg" style="padding: 4px 10px; font-size: 0.7rem;"><i class="fa-solid fa-upload"></i> Upload</button>
-                            <input type="file" id="stageBgInput" accept="image/*" style="display: none;">
+                            <input type="file" id="stageBgInput" accept="image/*" style="display: none;" aria-label="Upload stage background image">
                         </div>
                         <div class="bg-grid" id="stageBgGrid"></div>
                     </div>
@@ -3747,7 +3747,7 @@
             
             <div class="form-group" style="margin-bottom: 20px; text-align: left;">
                 <label>Zoom Level <span id="cropZoomVal" class="val-display" style="float: right;">1.0x</span></label>
-                <input type="range" id="cropZoom" min="0.5" max="3" step="0.05" value="1" style="width: 100%;">
+                <input type="range" id="cropZoom" min="0.5" max="3" step="0.05" value="1" style="width: 100%;" aria-label="Crop zoom level">
             </div>
             
             <div style="display: flex; gap: 10px; justify-content: center;">
@@ -3991,7 +3991,7 @@
 
                 <div class="form-group" style="margin-bottom: 5px;">
                     <label>Social Handle / Text</label>
-                    <input type="text" id="wmInputText" class="search-input" placeholder="@SaiTheLimit" style="width: 100%; background-image: none; padding: 10px;" maxlength="30">
+                    <input type="text" id="wmInputText" class="search-input" placeholder="@SaiTheLimit" style="width: 100%; background-image: none; padding: 10px;" maxlength="30" aria-label="Watermark text">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 5px;">
@@ -4002,11 +4002,11 @@
                 <div style="display: flex; gap: 15px; margin-bottom: 5px;">
                     <div class="form-group" style="flex: 1;">
                         <label>Opacity: <span id="wmOpacityVal" style="color: var(--accent-main); font-family: monospace;">100%</span></label>
-                        <input type="range" id="wmOpacitySlider" min="0.2" max="1" step="0.05" value="1" style="width: 100%;">
+                        <input type="range" id="wmOpacitySlider" min="0.2" max="1" step="0.05" value="1" style="width: 100%;" aria-label="Watermark opacity">
                     </div>
                     <div class="form-group" style="flex: 1;">
                         <label>Size Multiplier: <span id="wmSizeVal" style="color: var(--accent-main); font-family: monospace;">1.0x</span></label>
-                        <input type="range" id="wmSizeSlider" min="0.5" max="2.0" step="0.1" value="1.0" style="width: 100%;">
+                        <input type="range" id="wmSizeSlider" min="0.5" max="2.0" step="0.1" value="1.0" style="width: 100%;" aria-label="Watermark size">
                     </div>
                 </div>
 
@@ -9339,7 +9339,7 @@
             }
 
             function saveConfig() { 
-                localStorage.setItem('sai_mega_music', JSON.stringify({ 
+                const safeDataObj = { 
                     theme: AppState.theme, 
                     cf: AppState.crossfadeEnabled, 
                     cft: AppState.crossfadeTime, 
@@ -9362,13 +9362,23 @@
                     panningType: AppState.panningType,
                     shuffle: AppState.isShuffle,
                     loop: AppState.loopMode,
-                }));
-                AuraSecurity.secureSave('sai_mega_music', configPayload);
+                };
+                if (typeof AuraSecurity !== 'undefined' && typeof AuraSecurity.secureSave === 'function') {
+                    AuraSecurity.secureSave('sai_mega_music', safeDataObj); 
+                } else {
+                    localStorage.setItem('sai_mega_music', JSON.stringify(safeDataObj));
+                }
             }
 
             function loadConfig() {
                 try {
-                    const cfg = AuraSecurity.secureLoad('sai_mega_music');
+                    let cfg = null;
+                
+                    if (typeof AuraSecurity !== 'undefined') {
+                        cfg = AuraSecurity.secureLoad('sai_mega_music');
+                    } else {
+                        cfg = JSON.parse(localStorage.getItem('sai_mega_music'));
+                    }
                     if (cfg) {
                         AppState.theme = cfg.theme || 'dark'; 
                         document.documentElement.setAttribute('data-theme', AppState.theme); 
@@ -13851,20 +13861,50 @@
                     let activeDirectoryHandle = null;
                     let isFolderSynced = false;
 
-                    async function getFilesFromDirectoryHandle(dirHandle) {
+                    async function getFilesFromDirectoryHandle(dirHandle, basePath = '') {
                         const files = [];
                         for await (const entry of dirHandle.values()) {
+                            const entryPath = basePath ? basePath + '/' + entry.name : entry.name;
                             if (entry.kind === 'file') {
                                 const file = await entry.getFile();
                                 if (file.type.startsWith('audio/') || file.name.match(/\.(mp3|wav|flac|ogg|m4a)$/i) || file.name.match(/\.lrc$/i)) {
+                                    try { file.relPath = entryPath; } catch(e) {}
                                     files.push(file);
                                 }
                             } else if (entry.kind === 'directory') {
-                                const subFiles = await getFilesFromDirectoryHandle(entry);
+                                const subFiles = await getFilesFromDirectoryHandle(entry, entryPath);
                                 files.push(...subFiles);
                             }
                         }
                         return files;
+                    }
+
+                    const FOLDER_SCAN_CACHE_KEY = 'folder_scan_cache';
+                    let folderScanCache = {};
+                    let folderScanCacheLoaded = false;
+
+                    function getFileFingerprint(file) {
+                        const path = file.relPath || file.webkitRelativePath || file.name;
+                        return path + '|' + file.size + '|' + (file.lastModified || 0);
+                    }
+
+                    async function loadFolderScanCache() {
+                        if (folderScanCacheLoaded) return folderScanCache;
+                        folderScanCacheLoaded = true;
+                        try {
+                            const stored = await getFromDB('assets', FOLDER_SCAN_CACHE_KEY);
+                            if (stored && stored.entries) folderScanCache = stored.entries;
+                        } catch(e) {}
+                        return folderScanCache;
+                    }
+
+                    let scanCacheSaveTimer = null;
+                    function persistFolderScanCache(entries) {
+                        folderScanCache = entries;
+                        clearTimeout(scanCacheSaveTimer);
+                        scanCacheSaveTimer = setTimeout(() => {
+                            saveToDB('assets', { id: FOLDER_SCAN_CACHE_KEY, entries: entries, updatedAt: Date.now() });
+                        }, 250);
                     }
 
                     async function verifyPermission(fileHandle) {
@@ -13984,6 +14024,10 @@
 
                         AppState.folderPlaylist = [];
                         const totalFiles = audioFiles.length;
+
+                        const priorCache = await loadFolderScanCache();
+                        const nextCache = {};
+                        let cacheHits = 0;
                         
                         let wakeLockCtx = null;
                         let wakeOsc = null;
@@ -14002,52 +14046,77 @@
                         try {
                             for (let i = 0; i < totalFiles; i++) {
                                 let file = audioFiles[i];
-                                let exactDuration = 0;
-                                try { exactDuration = await window.getAudioDuration(file); } catch(e) {}
-                                const trackId = 'dir_' + Date.now() + Math.random().toString(36).substr(2, 9);
                                 const baseName = file.name.replace(/\.[^/.]+$/, "");
-                                
-                                let trackObj = { 
-                                    id: trackId, name: baseName, artist: "Local Directory", album: "Unknown Album", year: "Unknown Year", genre: "Unknown Genre", fileBlob: file, coverUrl: null, 
-                                    lrcText: lrcMap[baseName.toLowerCase()] || savedLrcMap[baseName] || null,
-                                    dateAdded: Date.now(), isFolderTrack: true, duration: exactDuration
-                                };
-                                
-                                const tags = await readTagsSafe(file);
-                                if (tags) { 
-                                    if (tags.title) trackObj.name = tags.title; 
-                                    if (tags.artist) trackObj.artist = tags.artist; 
-                                    if (tags.album) trackObj.album = tags.album;
-                                    if (tags.year) trackObj.year = tags.year;
-                                    if (tags.genre) trackObj.genre = tags.genre;
+                                const fingerprint = getFileFingerprint(file);
+                                const cached = priorCache[fingerprint];
+                                const freshLrc = lrcMap[baseName.toLowerCase()] || savedLrcMap[baseName] || null;
 
-                                    if (tags.picture) { 
-                                        let b64 = ""; 
-                                        for (let p = 0; p < tags.picture.data.length; p++) b64 += String.fromCharCode(tags.picture.data[p]); 
-                                        trackObj.coverUrl = "data:" + tags.picture.format + ";base64," + window.btoa(b64); 
-                                    }
+                                let trackObj;
 
-                                    if (tags.lyrics && !trackObj.lrcText) {
-                                        trackObj.lrcText = typeof tags.lyrics === 'string' ? tags.lyrics : (tags.lyrics.lyrics || null);
+                                if (cached) {
+                                    cacheHits++;
+                                    trackObj = {
+                                        id: cached.id, name: cached.name, artist: cached.artist, album: cached.album,
+                                        year: cached.year, genre: cached.genre, fileBlob: file, coverUrl: cached.coverUrl || null,
+                                        lrcText: freshLrc || cached.lrcText || null,
+                                        dateAdded: cached.dateAdded || Date.now(), isFolderTrack: true, duration: cached.duration || 0
+                                    };
+                                } else {
+                                    let exactDuration = 0;
+                                    try { exactDuration = await window.getAudioDuration(file); } catch(e) {}
+                                    const trackId = 'dir_' + Date.now() + Math.random().toString(36).substr(2, 9);
+
+                                    trackObj = { 
+                                        id: trackId, name: baseName, artist: "Local Directory", album: "Unknown Album", year: "Unknown Year", genre: "Unknown Genre", fileBlob: file, coverUrl: null, 
+                                        lrcText: freshLrc,
+                                        dateAdded: Date.now(), isFolderTrack: true, duration: exactDuration
+                                    };
+                                    
+                                    const tags = await readTagsSafe(file);
+                                    if (tags) { 
+                                        if (tags.title) trackObj.name = tags.title; 
+                                        if (tags.artist) trackObj.artist = tags.artist; 
+                                        if (tags.album) trackObj.album = tags.album;
+                                        if (tags.year) trackObj.year = tags.year;
+                                        if (tags.genre) trackObj.genre = tags.genre;
+
+                                        if (tags.picture) { 
+                                            let b64 = ""; 
+                                            for (let p = 0; p < tags.picture.data.length; p++) b64 += String.fromCharCode(tags.picture.data[p]); 
+                                            trackObj.coverUrl = "data:" + tags.picture.format + ";base64," + window.btoa(b64); 
+                                        }
+
+                                        if (tags.lyrics && !trackObj.lrcText) {
+                                            trackObj.lrcText = typeof tags.lyrics === 'string' ? tags.lyrics : (tags.lyrics.lyrics || null);
+                                        }
                                     }
                                 }
+
+                                nextCache[fingerprint] = {
+                                    id: trackObj.id, name: trackObj.name, artist: trackObj.artist, album: trackObj.album,
+                                    year: trackObj.year, genre: trackObj.genre, coverUrl: trackObj.coverUrl,
+                                    lrcText: trackObj.lrcText, dateAdded: trackObj.dateAdded, duration: trackObj.duration
+                                };
                                 
                                 AppState.folderPlaylist.push(trackObj);
                                 window.autoRecoverPlaylists(trackObj, true);
 
                                 if (!silentBoot) {
                                     const pct = Math.round(((i + 1) / totalFiles) * 100);
-                                    document.getElementById('scanToastTxt').textContent = `Scanning ${pct}%`;
+                                    document.getElementById('scanToastTxt').textContent = cached ? `Loading from cache ${pct}%` : `Scanning ${pct}%`;
                                     document.getElementById('scanToastFill').style.width = `${pct}%`;
-                                    if (i % 5 === 0) await new Promise(r => setTimeout(r, 10));
+                                    const yieldEvery = cached ? 50 : 5;
+                                    if (i % yieldEvery === 0) await new Promise(r => setTimeout(r, cached ? 4 : 10));
                                 } else {
                                     if (!window.startupSequenceFinished && totalFiles > 0) {
                                         const dynamicPct = 75 + (((i + 1) / totalFiles) * 15);
-                                        SplashController.update(dynamicPct, `SYNCING FOLDER FILES (${i + 1}/${totalFiles}) AND INDEXING LIBRARY...`);
-                                        if (i % 5 === 0) await new Promise(r => setTimeout(r, 5));
+                                        SplashController.update(dynamicPct, `${cached ? 'RESTORING FROM PRE-SCAN CACHE' : 'SYNCING FOLDER FILES'} (${i + 1}/${totalFiles}) AND INDEXING LIBRARY...`);
+                                        const yieldEvery = cached ? 50 : 5;
+                                        if (i % yieldEvery === 0) await new Promise(r => setTimeout(r, cached ? 2 : 5));
                                     }
                                 }
                             }
+                            persistFolderScanCache(nextCache);
                         } finally {
                             if (wakeOsc) {
                                 try { wakeOsc.stop(); } catch(e) {}
@@ -14100,7 +14169,13 @@
                                     progressToast.style.animation = 'fadeOut 0.4s ease-in forwards';
                                     setTimeout(() => progressToast.remove(), 400);
                                 }
-                                showToast(`Successfully loaded ${AppState.folderPlaylist.length} tracks!`, "fa-circle-check");
+                                const total = AppState.folderPlaylist.length;
+                                const msg = (cacheHits > 0 && cacheHits === total)
+                                    ? `Loaded ${total} tracks instantly from the pre-scan cache!`
+                                    : (cacheHits > 0
+                                        ? `Loaded ${total} tracks (${cacheHits} from cache, ${total - cacheHits} freshly scanned)!`
+                                        : `Successfully loaded ${total} tracks!`);
+                                showToast(msg, "fa-circle-check");
                             }
                         }, 50);
                     }
