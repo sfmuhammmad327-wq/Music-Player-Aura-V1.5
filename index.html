@@ -4809,7 +4809,11 @@
             window.openStorageOverview = async function() {
                 const list = document.getElementById('storageBreakdownList');
                 list.innerHTML = '<div style="text-align:center; color:var(--accent-main);"><i class="fa-solid fa-spinner fa-spin"></i> Analyzing Storage Volumes...</div>';
+                
                 openDialog('storageDetailsDialog');
+                
+                const dialogEl = document.getElementById('storageDetailsDialog');
+                if (dialogEl) dialogEl.style.maxWidth = '650px';
 
                 if (!db) {
                     list.innerHTML = '<p style="color:#ff4444; text-align:center;">Database disconnected.</p>';
@@ -4825,6 +4829,15 @@
                             req.onsuccess = (e) => {
                                 const cursor = e.target.result;
                                 if (cursor) {
+                                    const key = cursor.key.toString();
+
+                                    if (storeName === 'assets') {
+                                        if (!key.startsWith('art_') && !key.startsWith('bg_')) {
+                                            cursor.continue();
+                                            return;
+                                        }
+                                    }
+
                                     count++;
                                     const val = cursor.value;
                                     if (val.data) size += val.data.length * 0.75; 
@@ -4840,10 +4853,46 @@
                     });
                 };
 
+                const getSyncedFolderStats = async () => {
+                    return new Promise((resolve) => {
+                        let size = 0; let count = 0;
+                        
+                        const checkNative = () => {
+                            const nativeFlag = localStorage.getItem('sai_synced_folder_path');
+                            if (nativeFlag) {
+                                if (count === 0) count = 1;
+                                size += nativeFlag.length + 'sai_synced_folder_path'.length;
+                            }
+                            resolve({size, count});
+                        };
+
+                        if (!db || !db.objectStoreNames.contains('assets')) {
+                            checkNative();
+                            return;
+                        }
+
+                        try {
+                            const tx = db.transaction(['assets'], 'readonly');
+                            const req = tx.objectStore('assets').get('synced_folder');
+                            req.onsuccess = (e) => {
+                                if (e.target.result) {
+                                    count = 1;
+                                    size += JSON.stringify(e.target.result).length;
+                                }
+                                checkNative();
+                            };
+                            req.onerror = checkNative;
+                        } catch(err) { 
+                            checkNative();
+                        }
+                    });
+                };
+
                 const tracksStats = await getStoreSize('tracks');
                 const favsStats = await getStoreSize('favorites');
-                const assetsStats = await getStoreSize('assets');
+                const assetsStats = await getStoreSize('assets'); 
                 const playlistsStats = await getStoreSize('playlists');
+                const syncPointerStats = await getSyncedFolderStats();
 
                 const historyStr = localStorage.getItem('sai_aura_history') || '[]';
                 const historySize = historyStr.length;
@@ -4853,12 +4902,23 @@
                 let lsCount = 0;
                 for (let key in localStorage) {
                     if (localStorage.hasOwnProperty(key)) {
-                        lsCount++;
-                        lsTotalSize += localStorage[key].length + key.length;
+                        if (key !== 'sai_aura_history' && key !== 'sai_synced_folder_path') {
+                            lsCount++;
+                            lsTotalSize += localStorage[key].length + key.length;
+                        }
                     }
                 }
-                const otherLsSize = Math.max(0, lsTotalSize - historySize);
-                const otherLsCount = Math.max(0, lsCount - (localStorage.getItem('sai_aura_history') ? 1 : 0));
+                const otherLsSize = lsTotalSize;
+                const otherLsCount = lsCount;
+
+                let actualPhysicalUsage = 0;
+                if (navigator.storage && navigator.storage.estimate) {
+                    const estimate = await navigator.storage.estimate();
+                    actualPhysicalUsage = estimate.usage || 0;
+                }
+
+                const manualTotalSize = tracksStats.size + favsStats.size + assetsStats.size + playlistsStats.size + syncPointerStats.size + historySize + otherLsSize;
+                const overheadSize = Math.max(0, actualPhysicalUsage - manualTotalSize);
 
                 const formatBytes = (bytes) => {
                     if (bytes === 0) return '0 B';
@@ -4867,33 +4927,72 @@
                     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
                 };
 
+                let syncPointerLabel = 'Not Linked';
+                if (syncPointerStats.count > 0) {
+                    syncPointerLabel = window.electronAPI ? 'Native OS Link' : 'Web Handle';
+                }
+
                 list.innerHTML = `
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between;">
-                        <div><strong style="color:var(--text-main);"><i class="fa-solid fa-music"></i> Uploaded Tracks</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${tracksStats.count} Items</span></div>
-                        <div style="font-family:monospace; color:#00d2ff; font-weight:bold;">${formatBytes(tracksStats.size)}</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between;">
-                        <div><strong style="color:var(--text-main);"><i class="fa-solid fa-star"></i> Favourites Data</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${favsStats.count} Items</span></div>
-                        <div style="font-family:monospace; color:#FFD700; font-weight:bold;">${formatBytes(favsStats.size)}</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between;">
-                        <div><strong style="color:var(--text-main);"><i class="fa-solid fa-images"></i> Media Assets (Art/Bg)</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${assetsStats.count} Items</span></div>
-                        <div style="font-family:monospace; color:#ff4444; font-weight:bold;">${formatBytes(assetsStats.size)}</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between;">
-                        <div><strong style="color:var(--text-main);"><i class="fa-solid fa-list-ul"></i> Curated Playlists</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${playlistsStats.count} Items</span></div>
-                        <div style="font-family:monospace; color:#48ff00; font-weight:bold;">${formatBytes(playlistsStats.size)}</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between;">
-                        <div><strong style="color:var(--text-main);"><i class="fa-solid fa-clock-rotate-left"></i> Recent Plays History</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${historyCount} Items</span></div>
-                        <div style="font-family:monospace; color:#ffaa00; font-weight:bold;">${formatBytes(historySize)}</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between;">
-                        <div><strong style="color:var(--text-main);"><i class="fa-solid fa-gears"></i> Other Sources (Configs)</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${otherLsCount} Keys</span></div>
-                        <div style="font-family:monospace; color:#b0b0b0; font-weight:bold;">${formatBytes(otherLsSize)}</div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%;">
+                        <!-- 1. Uploaded Tracks -->
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <strong style="color:var(--text-main); font-size: 0.95rem; margin-bottom: 5px;"><i class="fa-solid fa-music"></i> Uploaded Tracks</strong>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">${tracksStats.count} Items</span>
+                            <div style="font-family:monospace; color:#00d2ff; font-weight:bold; font-size: 1.2rem; margin-top: auto;">${formatBytes(tracksStats.size)}</div>
+                        </div>
+                        
+                        <!-- 2. Favourites Data -->
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <strong style="color:var(--text-main); font-size: 0.95rem; margin-bottom: 5px;"><i class="fa-solid fa-star"></i> Favourites Data</strong>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">${favsStats.count} Items</span>
+                            <div style="font-family:monospace; color:#FFD700; font-weight:bold; font-size: 1.2rem; margin-top: auto;">${formatBytes(favsStats.size)}</div>
+                        </div>
+
+                        <!-- 3. Media Assets -->
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <strong style="color:var(--text-main); font-size: 0.95rem; margin-bottom: 5px;"><i class="fa-solid fa-images"></i> Media Assets (Art/Bg)</strong>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">${assetsStats.count} Items</span>
+                            <div style="font-family:monospace; color:#ff4444; font-weight:bold; font-size: 1.2rem; margin-top: auto;">${formatBytes(assetsStats.size)}</div>
+                        </div>
+
+                        <!-- 4. Synced Folder Pointer -->
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <strong style="color:var(--text-main); font-size: 0.95rem; margin-bottom: 5px;"><i class="fa-solid fa-folder-tree"></i> Synced Folder Pointer</strong>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">${syncPointerLabel}</span>
+                            <div style="font-family:monospace; color:#a334fa; font-weight:bold; font-size: 1.2rem; margin-top: auto;">${formatBytes(syncPointerStats.size)}</div>
+                        </div>
+
+                        <!-- 5. Curated Playlists -->
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <strong style="color:var(--text-main); font-size: 0.95rem; margin-bottom: 5px;"><i class="fa-solid fa-list-ul"></i> Curated Playlists</strong>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">${playlistsStats.count} Items</span>
+                            <div style="font-family:monospace; color:#48ff00; font-weight:bold; font-size: 1.2rem; margin-top: auto;">${formatBytes(playlistsStats.size)}</div>
+                        </div>
+
+                        <!-- 6. Recent Plays History -->
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <strong style="color:var(--text-main); font-size: 0.95rem; margin-bottom: 5px;"><i class="fa-solid fa-clock-rotate-left"></i> Recent Plays History</strong>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">${historyCount} Items</span>
+                            <div style="font-family:monospace; color:#ffaa00; font-weight:bold; font-size: 1.2rem; margin-top: auto;">${formatBytes(historySize)}</div>
+                        </div>
+
+                        <!-- 7. Other Configs -->
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <strong style="color:var(--text-main); font-size: 0.95rem; margin-bottom: 5px;"><i class="fa-solid fa-gears"></i> Other Sources (Configs)</strong>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">${otherLsCount} Keys</span>
+                            <div style="font-family:monospace; color:#b0b0b0; font-weight:bold; font-size: 1.2rem; margin-top: auto;">${formatBytes(otherLsSize)}</div>
+                        </div>
+
+                        <!-- 8. DB Cache Overhead -->
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px dashed rgba(255,255,255,0.2); display: flex; flex-direction: column;">
+                            <strong style="color:var(--text-muted); font-size: 0.95rem; margin-bottom: 5px;"><i class="fa-solid fa-server"></i> DB Cache Overhead</strong>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">Indices & Pre-allocated space</span>
+                            <div style="font-family:monospace; color:var(--text-muted); font-weight:bold; font-size: 1.2rem; margin-top: auto;">${formatBytes(overheadSize)}</div>
+                        </div>
+
                     </div>
                 `;
-            }
+            };
 
             function updateDefaultCover(colorHex) {
                 const hex = colorHex.replace('#', '%23'); 
@@ -5928,6 +6027,7 @@
             let appBootScore = null;
             let folderSyncSettled = false;
             let introSettled = false;
+            let folderPreScanLoadedAtBoot = false;
 
             function tryLockBootScore() {
                 if (appBootScore !== null) return;
@@ -13579,6 +13679,34 @@
                     introSettled = true;
                     tryLockBootScore();
                     showToast("Aura Engine Environment Initialized", "fa-check-circle");
+
+                    if (!folderPreScanLoadedAtBoot && AppState.folderPlaylist.length === 0) {
+                        setTimeout(async () => {
+                            if (AppState.folderPlaylist.length > 0) return;
+                            try {
+                                const handle = typeof window.getActiveDirectoryHandle === 'function' ? window.getActiveDirectoryHandle() : null;
+                                if (handle && typeof window.getFilesFromDirectoryHandle === 'function' && typeof window.processFolderFiles === 'function') {
+                                    const opts = { mode: 'read' };
+                                    let granted = (await handle.queryPermission(opts)) === 'granted';
+                                    if (!granted) granted = (await handle.requestPermission(opts)) === 'granted';
+                                    if (granted) {
+                                        const files = await window.getFilesFromDirectoryHandle(handle);
+                                        await window.processFolderFiles(files, true);
+                                        if (AppState.folderPlaylist.length > 0) {
+                                            showToast(`Auto-restored ${AppState.folderPlaylist.length} pre-scanned folder tracks.`, "fa-folder-tree");
+                                        }
+                                    }
+                                } else if (window.electronAPI && typeof window.electronAPI.triggerNativeFolderSync === 'function' && localStorage.getItem('sai_synced_folder_path')) {
+                                    await window.electronAPI.triggerNativeFolderSync();
+                                    if (AppState.folderPlaylist.length > 0) {
+                                        showToast(`Auto-restored ${AppState.folderPlaylist.length} pre-scanned folder tracks.`, "fa-folder-tree");
+                                    }
+                                }
+                            } catch (e) {
+                                console.warn("Aura Engine: post-init folder auto-restore skipped.", e);
+                            }
+                        }, 800);
+                    }
                     
                     window.appBootStats = {
                         globalScore: globalAuraScore,
@@ -13860,6 +13988,21 @@
                     let pendingFolderFiles = null;
                     let activeDirectoryHandle = null;
                     let isFolderSynced = false;
+                    let folderScanInProgress = false;
+                    window.getActiveDirectoryHandle = () => activeDirectoryHandle;
+                    window.getFilesFromDirectoryHandle = getFilesFromDirectoryHandle;
+                    window.processFolderFiles = processFolderFiles;
+                    window.loadFolderScanCache = loadFolderScanCache;
+
+                    function setMiniPlayerLockedForScan(locked) {
+                        folderScanInProgress = locked;
+                        const btn = document.getElementById('btnToggleMiniPlayer');
+                        if (!btn) return;
+                        btn.disabled = locked;
+                        btn.style.opacity = locked ? '0.3' : '1';
+                        btn.style.cursor = locked ? 'not-allowed' : 'pointer';
+                        btn.title = locked ? 'Mini Player unavailable while scanning folder…' : 'Toggle Mini Player (Ctrl+M)';
+                    }
 
                     async function getFilesFromDirectoryHandle(dirHandle, basePath = '') {
                         const files = [];
@@ -13982,6 +14125,10 @@
                     });
 
                     async function processFolderFiles(files, silentBoot = false) {
+                        setMiniPlayerLockedForScan(true);
+
+                        try {
+
                         let progressToast;
                         if (!silentBoot) {
                             const container = document.getElementById('toastContainer');
@@ -14091,7 +14238,6 @@
                                         }
                                     }
                                 }
-
                                 nextCache[fingerprint] = {
                                     id: trackObj.id, name: trackObj.name, artist: trackObj.artist, album: trackObj.album,
                                     year: trackObj.year, genre: trackObj.genre, coverUrl: trackObj.coverUrl,
@@ -14177,7 +14323,14 @@
                                         : `Successfully loaded ${total} tracks!`);
                                 showToast(msg, "fa-circle-check");
                             }
+                            setMiniPlayerLockedForScan(false);
                         }, 50);
+
+                        } catch (scanErr) {
+                            console.error("Aura Engine: folder scan failed.", scanErr);
+                            setMiniPlayerLockedForScan(false);
+                            if (!silentBoot) showToast("Folder scan failed. Please try again.", "fa-triangle-exclamation");
+                        }
                     }
 
                     DOM.btnSyncFolder.addEventListener('click', () => {
@@ -15860,9 +16013,14 @@
                             
                             const opts = { mode: 'read' };
                             if ((await activeDirectoryHandle.queryPermission(opts)) === 'granted') {
-                                SplashController.update(75, "SYNCING FOLDER TRACKS AND INDEXING LIBRARY...");
+                                const priorCachePeek = await loadFolderScanCache();
+                                const cachedCount = Object.keys(priorCachePeek || {}).length;
+                                SplashController.update(75, cachedCount > 0
+                                    ? `RESTORING ${cachedCount} PRE-SCANNED TRACKS...`
+                                    : "SYNCING FOLDER TRACKS AND INDEXING LIBRARY...");
                                 const files = await getFilesFromDirectoryHandle(activeDirectoryHandle);
                                 await processFolderFiles(files, true);
+                                folderPreScanLoadedAtBoot = AppState.folderPlaylist.length > 0;
                             } else {
                                 document.getElementById('folderDropText').innerHTML = `Synced: <strong style="color:var(--accent-main);">${evAsset.name}</strong><br><span style="font-size:0.75rem;">Click anywhere to auto-restore!</span>`;
                                 document.getElementById('btnBrowseFolder').style.display = 'none';
@@ -15885,10 +16043,14 @@
                         }
                     }
                     const isDesktopSynced = localStorage.getItem('sai_synced_folder_path');
-                    const canNativeSync = !!(isDesktopSynced && window.electronAPI && typeof window.electronAPI.triggerNativeFolderSync === 'function');
+                    const canNativeSync = !!(isDesktopSynced && window.electronAPI && typeof window.electronAPI.triggerNativeFolderSync === 'function' && !folderPreScanLoadedAtBoot);
 
                     if (canNativeSync) {
-                        SplashController.update(80, "SCANNING SYNCED DIRECTORY...");
+                        const priorCachePeek = await loadFolderScanCache();
+                        const cachedCount = Object.keys(priorCachePeek || {}).length;
+                        SplashController.update(80, cachedCount > 0
+                            ? `RESTORING ${cachedCount} PRE-SCANNED TRACKS...`
+                            : "SCANNING SYNCED DIRECTORY...");
 
                         let scanProgressHandler = null;
                         if (typeof window.electronAPI.onNativeFolderScanProgress === 'function') {
@@ -15898,7 +16060,8 @@
                                 const total = progress.total || 0;
                                 if (total > 0) {
                                     const pct = 80 + Math.min(10, Math.round((current / total) * 10));
-                                    SplashController.update(pct, `SCANNING SYNCED DIRECTORY (${current}/${total})...`);
+                                    const label = cachedCount > 0 ? 'RESTORING FROM PRE-SCAN CACHE' : 'SCANNING SYNCED DIRECTORY';
+                                    SplashController.update(pct, `${label} (${current}/${total})...`);
                                 }
                             };
                             window.electronAPI.onNativeFolderScanProgress(scanProgressHandler);
@@ -15906,6 +16069,7 @@
 
                         try {
                             await window.electronAPI.triggerNativeFolderSync();
+                            folderPreScanLoadedAtBoot = AppState.folderPlaylist.length > 0;
                         } catch (err) {
                             console.warn("Aura Engine: native synced-folder scan failed, continuing startup.", err);
                             if (typeof showToast === 'function') {
@@ -15916,7 +16080,7 @@
                                 window.electronAPI.removeNativeFolderSyncProgressListener(scanProgressHandler);
                             }
                         }
-                    } else {
+                    } else if (!folderPreScanLoadedAtBoot) {
                         await new Promise(resolve => setTimeout(resolve, 1200));
                     }
 
@@ -17211,6 +17375,10 @@
                     let miniStartX, miniStartY, miniInitialX, miniInitialY;
 
                     function toggleMiniPlayer() {
+                        if (typeof folderScanInProgress !== 'undefined' && folderScanInProgress) {
+                            showToast("Mini Player is unavailable while the folder is scanning.", "fa-hourglass-half");
+                            return;
+                        }
                         document.querySelectorAll('dialog[open]').forEach(d => {
                             d.style.transition = 'none';
                             d.classList.remove('showing');
